@@ -1,0 +1,27 @@
+# define data 
+bmilevel <- c(rep(0,3680),rep(1,5367))
+hyper <- c(rep(1,1890), rep(0,1790), rep(1,2243), rep(0,3124))
+
+# logistic model
+logistic <- glm(hyper~bmilevel, family = binomial(logit))
+summary(logistic)
+
+# probit model
+probit <- glm(hyper~bmilevel, family = binomial(probit))
+summary(probit)
+
+# complementary log-log model
+cloglog <- glm(hyper~bmilevel, family = binomial(cloglog))
+summary(cloglog)
+
+# log-log model
+loglog <- glm(cbind(1-hyper,hyper)~bmilevel, family = binomial(cloglog))
+summary(loglog)
+
+# compare AIC & BIC to choose the best model
+cbind(AIC(logistic, probit, cloglog, loglog), BIC(logistic, probit, cloglog, loglog))
+
+# compare MSE to choose the best model
+cbind("MSE logistic" = mean(logistic$residuals^2), "MSE probit" = mean(probit$residuals^2), "MSE cloglog" = mean(cloglog$residuals^2), "MSE loglog" = mean(loglog$residuals^2))
+
+# probit model is the best model (lowest MSE value)
